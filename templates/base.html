@@ -17,6 +17,19 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.collapsible').collapsible();
+            $('.datepicker').pickadate({
+                selectMonths: true,
+                selectYears: 15,
+                today: 'Today',
+                clear: 'Clear',
+                close: 'Ok',
+                closOnSelect: false
+            })
+            $('select').material_select();
+        });
+
+        document.getElementById("matfix").addEventListener("click", function(e) {
+            e.stopPropagation();
         });
     </script>
 </body>
