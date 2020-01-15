@@ -33,5 +33,18 @@ def edit_task(task_id):
     all_categories = mongo.db.categories.find()
     return render_template('edittask.html', task=the_task, categories=all_categories)
 
+@app.route('/update_task/<task_id>', methods=['POST'])
+def update_task(task_id):  # (task_id) is our hooker in the tasks list because is the primary key
+    tasks = mongo.db.tasks
+    tasks.update({'_id': ObjectId(task_id)}, {  # this function will take the task_name etc from the form in edittask.html and will overwrite the task_name in the db with this info
+        'task_name': request.form.get('task_name'),
+        'category_name': request.form.get('category_name'),
+        'task_description': request.form.get('task_description'),
+        'due_date': request.form.get('due_date'),
+        'is_urgent': request.form.get('is_urgent')
+    })
+    return redirect(url_for('get_tasks'))
+
+
 if __name__ == '__main__':
     app.run(host=os.getenv('IP'), port=os.getenv('PORT'), debug=True)
