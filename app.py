@@ -13,7 +13,8 @@ mongo = PyMongo(app)
 @app.route('/')
 @app.route('/get_tasks')
 def get_tasks():
-    return render_template('tasks.html', tasks = mongo.db.tasks.find()) # el 'tasks.find()' es el method para buscar entre los records the nuestra collection en MongoDB llamada tasks
+    return render_template('tasks.html', 
+    tasks=mongo.db.tasks.find()) # el 'tasks.find()' es el method para buscar entre los records the nuestra collection en MongoDB llamada tasks
 
 @app.route('/add_tasks')
 def add_tasks():
@@ -45,6 +46,29 @@ def update_task(task_id):  # (task_id) is our hooker in the tasks list because i
     })
     return redirect(url_for('get_tasks'))
 
+
+@app.route('/delete_task/<task_id>')
+def delete_task(task_id):
+    mongo.db.tasks.remove({'_id': ObjectId(task_id)})
+    return redirect('get_tasks')
+
+@app.route('/get_categories')
+def get_categories():
+    return render_template('categories.html', 
+    categories=mongo.db.categories.find())
+
+@app.route('/edit_category/<category_id>')
+def edit_category(category_id):
+    return render_template('editcategory.html',
+                           category=mongo.db.categories.find_one(
+                           {'_id': ObjectId(category_id)}))
+
+@app.route('/update_category/<category_id>', methods=['POST'])
+def update_category(category_id):
+    mongo.db.categories.update(
+        {'_id': ObjectId(category_id)},
+        {'category_name': request.form.get('category_name')})
+    return redirect(url_for('get_categories'))
 
 if __name__ == '__main__':
     app.run(host=os.getenv('IP'), port=os.getenv('PORT'), debug=True)
